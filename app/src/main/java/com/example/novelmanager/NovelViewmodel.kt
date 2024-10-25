@@ -6,12 +6,9 @@ import androidx.lifecycle.LiveData
 import com.example.novelmanager.database.entidades.Novel
 
 class NovelViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: NovelRepository = NovelRepository(application)
-    val allNovels: LiveData<List<Novel>> = repository.getAllNovels()
 
-    fun getAllNovels(): LiveData<List<Novel>> {
-        return allNovels
-    }
+    private val repository: NovelRepository = NovelRepository(application)
+    val allNovels: LiveData<List<Novel>> = repository.allNovels
 
     fun agregarNovela(novel: Novel) {
         repository.insert(novel)
@@ -19,5 +16,9 @@ class NovelViewModel(application: Application) : AndroidViewModel(application) {
 
     fun eliminarNovela(novel: Novel) {
         repository.delete(novel)
+    }
+
+    fun fetchAllNovels(): LiveData<List<Novel>> {
+        return allNovels
     }
 }

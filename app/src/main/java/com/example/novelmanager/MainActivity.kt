@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         novelViewModel = ViewModelProvider(this).get(NovelViewModel::class.java)
 
-        novelViewModel.getAllNovels().observe(this, Observer { novels ->
+        novelViewModel.fetchAllNovels().observe(this, Observer { novels ->
             novelAdapter.setNovels(novels)
         })
 

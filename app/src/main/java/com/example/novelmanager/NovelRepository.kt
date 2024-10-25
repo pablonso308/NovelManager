@@ -37,8 +37,7 @@ class NovelRepository(application: Application) {
         }
     }
 
-    fun getAllNovels(): LiveData<List<Novel>> {
+    fun fetchAllNovels(): LiveData<List<Novel>> {
         return allNovels
-
     }
 }
