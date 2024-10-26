@@ -72,13 +72,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonDeleteBook.setOnClickListener {
-            val novelToDelete = novelAdapter.getSelectedNovel() // Implement this method to get the selected novel
-            if (novelToDelete != null) {
-                novelViewModel.eliminarNovela(novelToDelete)
-                Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
-            }
-        }
+    val novelToDelete = novelAdapter.getSelectedNovel()
+    if (novelToDelete != null) {
+        novelViewModel.eliminarNovela(novelToDelete)
+        Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
+    } else {
+        Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+    }
+}
     }
 }
