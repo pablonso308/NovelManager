@@ -12,13 +12,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novelmanager.database.entidades.Novel
+import com.example.novelmanager.database.entidades.Review
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var buttonAddBook: Button
-    private lateinit var buttonDeleteBook : Button
+    private lateinit var buttonDeleteBook: Button
+    private lateinit var buttonAddReview: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var novelViewModel: NovelViewModel
+    private lateinit var reviewViewModel: ReviewViewModel
     private lateinit var novelAdapter: NovelAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         buttonAddBook = findViewById(R.id.buttonAddBook)
         buttonDeleteBook = findViewById(R.id.buttonDeleteBook)
+        buttonAddReview = findViewById(R.id.buttonAddReview)
         recyclerView = findViewById(R.id.recyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -35,12 +39,12 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = novelAdapter
 
         novelViewModel = ViewModelProvider(this).get(NovelViewModel::class.java)
+        reviewViewModel = ViewModelProvider(this).get(ReviewViewModel::class.java)
 
         novelViewModel.fetchAllNovels().observe(this, Observer { novels ->
             novelAdapter.setNovels(novels)
         })
 
-        // Dentro del método onCreate
         buttonAddBook.setOnClickListener {
             val dialogView = LayoutInflater.from(this).inflate(R.layout.add_novel, null)
             val editTextTitle = dialogView.findViewById<EditText>(R.id.editTextTitle)
@@ -72,13 +76,46 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonDeleteBook.setOnClickListener {
-    val novelToDelete = novelAdapter.getSelectedNovel()
-    if (novelToDelete != null) {
-        novelViewModel.eliminarNovela(novelToDelete)
-        Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
-    } else {
-        Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
-    }
-}
+            val novelToDelete = novelAdapter.getSelectedNovel()
+            if (novelToDelete != null) {
+                novelViewModel.eliminarNovela(novelToDelete)
+                Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        buttonAddReview.setOnClickListener {
+            val selectedNovel = novelAdapter.getSelectedNovel()
+            if (selectedNovel != null) {
+                val dialogView = LayoutInflater.from(this).inflate(R.layout.add_review, null)
+                val editTextReviewer = dialogView.findViewById<EditText>(R.id.editTextReviewer)
+                val editTextRating = dialogView.findViewById<EditText>(R.id.editTextRating)
+                val editTextComment = dialogView.findViewById<EditText>(R.id.editTextComment)
+
+                AlertDialog.Builder(this)
+                    .setTitle("Agregar Reseña")
+                    .setView(dialogView)
+                    .setPositiveButton("Agregar") { _, _ ->
+                        val reviewer = editTextReviewer.text.toString()
+                        val rating = editTextRating.text.toString().toIntOrNull() ?: 0
+                        val comment = editTextComment.text.toString()
+
+                        val newReview = Review(
+                            novelId = selectedNovel.id,
+                            reviewer = reviewer,
+                            rating = rating,
+                            comment = comment
+                        )
+                        reviewViewModel.addReview(newReview)
+                        Toast.makeText(this, "Review added", Toast.LENGTH_SHORT).show()
+                    }
+                    .setNegativeButton("Cancelar", null)
+                    .create()
+                    .show()
+            } else {
+                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
