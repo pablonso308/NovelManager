@@ -1,8 +1,11 @@
 package com.example.novelmanager
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -37,15 +40,35 @@ class MainActivity : AppCompatActivity() {
             novelAdapter.setNovels(novels)
         })
 
+        // Dentro del método onCreate
         buttonAddBook.setOnClickListener {
-            val newNovel = Novel(
-                title = "New Title", // Replace with actual input
-                author = "New Author", // Replace with actual input
-                year = 2023, // Replace with actual input
-                synopsis = "New Synopsis" // Replace with actual input
-            )
-            novelViewModel.agregarNovela(newNovel)
-            Toast.makeText(this, "Novel added", Toast.LENGTH_SHORT).show()
+            val dialogView = LayoutInflater.from(this).inflate(R.layout.add_novel, null)
+            val editTextTitle = dialogView.findViewById<EditText>(R.id.editTextTitle)
+            val editTextAuthor = dialogView.findViewById<EditText>(R.id.editTextAuthor)
+            val editTextYear = dialogView.findViewById<EditText>(R.id.editTextYear)
+            val editTextSynopsis = dialogView.findViewById<EditText>(R.id.editTextSynopsis)
+
+            AlertDialog.Builder(this)
+                .setTitle("Agregar Novela")
+                .setView(dialogView)
+                .setPositiveButton("Agregar") { _, _ ->
+                    val title = editTextTitle.text.toString()
+                    val author = editTextAuthor.text.toString()
+                    val year = editTextYear.text.toString().toIntOrNull() ?: 0
+                    val synopsis = editTextSynopsis.text.toString()
+
+                    val newNovel = Novel(
+                        title = title,
+                        author = author,
+                        year = year,
+                        synopsis = synopsis
+                    )
+                    novelViewModel.agregarNovela(newNovel)
+                    Toast.makeText(this, "Novel added", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Cancelar", null)
+                .create()
+                .show()
         }
 
         buttonDeleteBook.setOnClickListener {
