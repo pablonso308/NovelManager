@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonAddBook: Button
     private lateinit var buttonDeleteBook: Button
     private lateinit var buttonAddReview: Button
+    private lateinit var buttonShowReviews: Button
     private lateinit var recyclerView: RecyclerView
     private lateinit var novelViewModel: NovelViewModel
     private lateinit var reviewViewModel: ReviewViewModel
@@ -31,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         buttonAddBook = findViewById(R.id.buttonAddBook)
         buttonDeleteBook = findViewById(R.id.buttonDeleteBook)
         buttonAddReview = findViewById(R.id.buttonAddReview)
+        buttonShowReviews = findViewById(R.id.buttonShowReviews)
         recyclerView = findViewById(R.id.recyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -113,6 +115,25 @@ class MainActivity : AppCompatActivity() {
                     .setNegativeButton("Cancelar", null)
                     .create()
                     .show()
+            } else {
+                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        buttonShowReviews.setOnClickListener {
+            val selectedNovel = novelAdapter.getSelectedNovel()
+            if (selectedNovel != null) {
+                reviewViewModel.getReviewsForNovel(selectedNovel.id).observe(this, Observer { reviews ->
+                    val reviewsText = reviews.joinToString("\n") { review ->
+                        "Reviewer: ${review.reviewer}\nRating: ${review.rating}\nComment: ${review.comment}\n"
+                    }
+                    AlertDialog.Builder(this)
+                        .setTitle("Reseñas")
+                        .setMessage(reviewsText)
+                        .setPositiveButton("OK", null)
+                        .create()
+                        .show()
+                })
             } else {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
             }
