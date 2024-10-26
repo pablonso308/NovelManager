@@ -12,11 +12,11 @@ class NovelAdapter : RecyclerView.Adapter<NovelAdapter.NovelViewHolder>() {
     private var novels: List<Novel> = listOf()
     private var selectedNovel: Novel? = null
 
-
     fun setNovels(novels: List<Novel>) {
         this.novels = novels
         notifyDataSetChanged()
     }
+
     fun getSelectedNovel(): Novel? {
         return selectedNovel
     }
@@ -34,6 +34,7 @@ class NovelAdapter : RecyclerView.Adapter<NovelAdapter.NovelViewHolder>() {
             notifyDataSetChanged()
         }
         holder.itemView.isSelected = selectedNovel == currentNovel
+        holder.showDetails(selectedNovel == currentNovel)
     }
 
     override fun getItemCount(): Int {
@@ -43,10 +44,19 @@ class NovelAdapter : RecyclerView.Adapter<NovelAdapter.NovelViewHolder>() {
     class NovelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val textViewTitle: TextView = itemView.findViewById(R.id.textViewTitle)
         private val textViewAuthor: TextView = itemView.findViewById(R.id.textViewAuthor)
+        private val textViewYear: TextView = itemView.findViewById(R.id.textViewYear)
+        private val textViewSynopsis: TextView = itemView.findViewById(R.id.textViewSynopsis)
 
         fun bind(novel: Novel) {
             textViewTitle.text = novel.title
             textViewAuthor.text = novel.author
+            textViewYear.text = novel.year.toString()
+            textViewSynopsis.text = novel.synopsis
+        }
+
+        fun showDetails(show: Boolean) {
+            textViewYear.visibility = if (show) View.VISIBLE else View.GONE
+            textViewSynopsis.visibility = if (show) View.VISIBLE else View.GONE
         }
     }
 }

@@ -16,4 +16,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Author" />
+
+    <TextView
+        android:id="@+id/textViewYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Year"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textViewSynopsis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Synopsis"
+        android:visibility="gone" />
 </LinearLayout>
