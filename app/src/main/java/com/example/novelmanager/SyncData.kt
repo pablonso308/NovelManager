@@ -9,7 +9,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SyncData(private val context: Context, private val novelToSend: Novel) : AsyncTask<Void, Void, Void>() {
+class SyncDataTask(private val context: Context, private val novelToSend: Novel) : AsyncTask<Void, Void, Void>() {
 
     override fun doInBackground(vararg params: Void?): Void? {
         val apiService = RetrofitClient.instance

@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Novel added", Toast.LENGTH_SHORT).show()
 
                     // Iniciar SyncData para enviar la novela al servidor
-                    SyncData(this, newNovel).execute()
+                    SyncDataTask(this, newNovel).execute()
 
                 }
                 .setNegativeButton("Cancelar", null)
