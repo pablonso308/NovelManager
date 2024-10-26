@@ -17,4 +17,7 @@ interface NovelDao {
 
     @Query("SELECT * FROM novel_table ORDER BY title ASC")
     fun getAllNovels(): LiveData<List<Novel>>
+
+    @Query("UPDATE novel_table SET isFavorite = :isFavorite WHERE id = :novelId")
+    suspend fun updateFavoriteStatus(novelId: Int, isFavorite: Boolean)
 }

@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var novelViewModel: NovelViewModel
     private lateinit var reviewViewModel: ReviewViewModel
     private lateinit var novelAdapter: NovelAdapter
+    private lateinit var buttonFavoriteBook: Button
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,8 @@ class MainActivity : AppCompatActivity() {
         buttonAddReview = findViewById(R.id.buttonAddReview)
         buttonShowReviews = findViewById(R.id.buttonShowReviews)
         recyclerView = findViewById(R.id.recyclerView)
+        buttonFavoriteBook = findViewById(R.id.buttonFavoriteBook)
+
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
@@ -69,7 +73,7 @@ class MainActivity : AppCompatActivity() {
                         year = year,
                         synopsis = synopsis
                     )
-                    novelViewModel.agregarNovela(newNovel)
+                    novelViewModel.agregarNovela(novel = newNovel)
                     Toast.makeText(this, "Novel added", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("Cancelar", null)
@@ -138,5 +142,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
             }
         }
+
+        buttonFavoriteBook.setOnClickListener {
+            val selectedNovel = novelAdapter.getSelectedNovel()
+            if (selectedNovel != null) {
+                val isFavorite = !selectedNovel.isFavorite
+                novelViewModel.updateFavoriteStatus(selectedNovel.id, isFavorite)
+                Toast.makeText(this, if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 }

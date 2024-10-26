@@ -1,9 +1,10 @@
 package com.example.novelmanager
-
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.example.novelmanager.database.entidades.Novel
+import kotlinx.coroutines.launch
 
 class NovelViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -20,5 +21,11 @@ class NovelViewModel(application: Application) : AndroidViewModel(application) {
 
     fun fetchAllNovels(): LiveData<List<Novel>> {
         return allNovels
+    }
+
+    fun updateFavoriteStatus(novelId: Int, isFavorite: Boolean) {
+        viewModelScope.launch {
+            repository.updateFavoriteStatus(novelId, isFavorite)
+        }
     }
 }

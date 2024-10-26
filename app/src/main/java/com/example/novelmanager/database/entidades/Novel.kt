@@ -9,5 +9,6 @@ data class Novel(
     val title: String,
     val author: String,
     val year: Int,
-    val synopsis: String
+    val synopsis: String,
+    val isFavorite: Boolean = false
 )

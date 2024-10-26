@@ -40,4 +40,11 @@ class NovelRepository(application: Application) {
     fun fetchAllNovels(): LiveData<List<Novel>> {
         return allNovels
     }
+
+    suspend fun updateFavoriteStatus(novelId: Int, isFavorite: Boolean) {
+        withContext(Dispatchers.IO) {
+            novelDao.updateFavoriteStatus(novelId, isFavorite)
+        }
+    }
+
 }
