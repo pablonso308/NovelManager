@@ -3,6 +3,7 @@ package com.example.novelmanager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novelmanager.database.entidades.Novel
@@ -22,7 +23,7 @@ class NovelAdapter : RecyclerView.Adapter<NovelAdapter.NovelViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NovelViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.novel_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_novel, parent, false)
         return NovelViewHolder(itemView)
     }
 
@@ -46,12 +47,14 @@ class NovelAdapter : RecyclerView.Adapter<NovelAdapter.NovelViewHolder>() {
         private val textViewAuthor: TextView = itemView.findViewById(R.id.textViewAuthor)
         private val textViewYear: TextView = itemView.findViewById(R.id.textViewYear)
         private val textViewSynopsis: TextView = itemView.findViewById(R.id.textViewSynopsis)
+        private val favoriteImageView: ImageView = itemView.findViewById(R.id.imageViewFavorite)
 
         fun bind(novel: Novel) {
             textViewTitle.text = novel.title
             textViewAuthor.text = novel.author
             textViewYear.text = novel.year.toString()
             textViewSynopsis.text = novel.synopsis
+            favoriteImageView.visibility = if (novel.isFavorite) View.VISIBLE else View.GONE
         }
 
         fun showDetails(show: Boolean) {
