@@ -19,11 +19,18 @@ class SyncDataTask(private val context: Context, private val novelToSend: Novel)
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
                     // Novela enviada exitosamente
+                    NotificationHelper(context).sendNotification(
+                        "Synchronization Complete",
+                        "The novel '${novelToSend.title}' could not be synchronized.")
                 }
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 // Manejar error
+                NotificationHelper(context).sendNotification(
+                    "Synchronization Failed",
+                    "The novel '${novelToSend.title}' could not be synchronized"
+                )
             }
         })
 

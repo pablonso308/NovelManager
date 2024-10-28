@@ -56,6 +56,16 @@
             android:layout_rowWeight="1"
             android:text="Favorita" />
 
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
     </GridLayout>
 
     <androidx.recyclerview.widget.RecyclerView

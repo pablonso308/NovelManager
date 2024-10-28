@@ -64,6 +64,8 @@ dependencies {
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.preference.ktx)
+    implementation(libs.androidx.preference)
     kapt(libs.androidx.room.compiler) // Ensure this line is present
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -74,4 +76,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("androidx.preference:preference:1.1.1")
 }

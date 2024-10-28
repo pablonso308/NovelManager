@@ -1,5 +1,7 @@
 package com.example.novelmanager
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.Button
@@ -13,8 +15,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novelmanager.database.entidades.Novel
 import com.example.novelmanager.database.entidades.Review
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Novel>> {
 
     private lateinit var buttonAddBook: Button
     private lateinit var buttonDeleteBook: Button
@@ -25,19 +29,22 @@ class MainActivity : AppCompatActivity() {
     private lateinit var reviewViewModel: ReviewViewModel
     private lateinit var novelAdapter: NovelAdapter
     private lateinit var buttonFavoriteBook: Button
-
+    private lateinit var buttonSettings: Button
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        LoaderManager.getInstance(this).initLoader(0, null, this)
+
         buttonAddBook = findViewById(R.id.buttonAddBook)
         buttonDeleteBook = findViewById(R.id.buttonDeleteBook)
         buttonAddReview = findViewById(R.id.buttonAddReview)
         buttonShowReviews = findViewById(R.id.buttonShowReviews)
-        recyclerView = findViewById(R.id.recyclerView)
         buttonFavoriteBook = findViewById(R.id.buttonFavoriteBook)
-
+        buttonSettings = findViewById(R.id.buttonSettings)
+        recyclerView = findViewById(R.id.recyclerView)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
@@ -78,7 +85,6 @@ class MainActivity : AppCompatActivity() {
 
                     // Iniciar SyncData para enviar la novela al servidor
                     SyncDataTask(this, newNovel).execute()
-
                 }
                 .setNegativeButton("Cancelar", null)
                 .create()
@@ -158,5 +164,39 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+        sharedPreferences = getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
+        applyUserSettings()
+
+        // Schedule the sync task
+        val syncScheduler = SyncScheduler(this)
+        syncScheduler.scheduleSync()
+    }
+
+    private fun applyUserSettings() {
+        val darkMode = sharedPreferences.getBoolean("dark_mode", false)
+        if (darkMode) {
+            setTheme(R.style.DarkTheme)
+        } else {
+            setTheme(R.style.AppTheme)
+        }
+    }
+
+    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<Novel>> {
+        return NovelLoader(this)
+    }
+
+    override fun onLoadFinished(loader: Loader<List<Novel>>, data: List<Novel>?) {
+        // Update the adapter with the loaded data
+        novelAdapter.setNovels(data ?: emptyList())
+    }
+
+    override fun onLoaderReset(loader: Loader<List<Novel>>) {
+        // Clear the adapter
+        novelAdapter.setNovels(emptyList())
     }
 }
