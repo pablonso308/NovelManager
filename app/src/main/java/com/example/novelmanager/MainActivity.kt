@@ -9,34 +9,27 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.novelmanager.SQLlite.SQLDao
 import com.example.novelmanager.database.entidades.Novel
-import com.example.novelmanager.database.entidades.Review
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.Loader
 
-class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Novel>> {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var buttonAddBook: Button
     private lateinit var buttonDeleteBook: Button
     private lateinit var buttonAddReview: Button
     private lateinit var buttonShowReviews: Button
     private lateinit var recyclerView: RecyclerView
-    private lateinit var novelViewModel: NovelViewModel
-    private lateinit var reviewViewModel: ReviewViewModel
     private lateinit var novelAdapter: NovelAdapter
     private lateinit var buttonFavoriteBook: Button
     private lateinit var buttonSettings: Button
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sqlDao: SQLDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        LoaderManager.getInstance(this).initLoader(0, null, this)
 
         buttonAddBook = findViewById(R.id.buttonAddBook)
         buttonDeleteBook = findViewById(R.id.buttonDeleteBook)
@@ -45,18 +38,14 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
         buttonFavoriteBook = findViewById(R.id.buttonFavoriteBook)
         buttonSettings = findViewById(R.id.buttonSettings)
         recyclerView = findViewById(R.id.recyclerView)
+        sqlDao = SQLDao(this)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.setHasFixedSize(true)
         novelAdapter = NovelAdapter()
         recyclerView.adapter = novelAdapter
 
-        novelViewModel = ViewModelProvider(this).get(NovelViewModel::class.java)
-        reviewViewModel = ViewModelProvider(this).get(ReviewViewModel::class.java)
-
-        novelViewModel.fetchAllNovels().observe(this, Observer { novels ->
-            novelAdapter.setNovels(novels)
-        })
+        loadNovelsFromDatabase()
 
         buttonAddBook.setOnClickListener {
             val dialogView = LayoutInflater.from(this).inflate(R.layout.add_novel, null)
@@ -74,17 +63,11 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
                     val year = editTextYear.text.toString().toIntOrNull() ?: 0
                     val synopsis = editTextSynopsis.text.toString()
 
-                    val newNovel = Novel(
-                        title = title,
-                        author = author,
-                        year = year,
-                        synopsis = synopsis
-                    )
-                    novelViewModel.agregarNovela(novel = newNovel)
-                    Toast.makeText(this, "Novel added", Toast.LENGTH_SHORT).show()
-
-                    // Iniciar SyncData para enviar la novela al servidor
-                    SyncDataTask(this, newNovel).execute()
+                    val newNovelId = sqlDao.insertNovel(title, author, year, synopsis, false)
+                    if (newNovelId != -1L) {
+                        Toast.makeText(this, "Novel added with ID: $newNovelId", Toast.LENGTH_SHORT).show()
+                        loadNovelsFromDatabase()
+                    }
                 }
                 .setNegativeButton("Cancelar", null)
                 .create()
@@ -94,8 +77,11 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
         buttonDeleteBook.setOnClickListener {
             val novelToDelete = novelAdapter.getSelectedNovel()
             if (novelToDelete != null) {
-                novelViewModel.eliminarNovela(novelToDelete)
-                Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
+                val rowsDeleted = sqlDao.deleteNovel(novelToDelete.id.toLong())
+                if (rowsDeleted > 0) {
+                    Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
+                    loadNovelsFromDatabase()
+                }
             } else {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
             }
@@ -117,14 +103,10 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
                         val rating = editTextRating.text.toString().toIntOrNull() ?: 0
                         val comment = editTextComment.text.toString()
 
-                        val newReview = Review(
-                            novelId = selectedNovel.id,
-                            reviewer = reviewer,
-                            rating = rating,
-                            comment = comment
-                        )
-                        reviewViewModel.addReview(newReview)
-                        Toast.makeText(this, "Review added", Toast.LENGTH_SHORT).show()
+                        val newReviewId = sqlDao.insertReview(selectedNovel.id, reviewer, rating, comment)
+                        if (newReviewId != -1L) {
+                            Toast.makeText(this, "Review added", Toast.LENGTH_SHORT).show()
+                        }
                     }
                     .setNegativeButton("Cancelar", null)
                     .create()
@@ -137,17 +119,21 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
         buttonShowReviews.setOnClickListener {
             val selectedNovel = novelAdapter.getSelectedNovel()
             if (selectedNovel != null) {
-                reviewViewModel.getReviewsForNovel(selectedNovel.id).observe(this, Observer { reviews ->
-                    val reviewsText = reviews.joinToString("\n") { review ->
-                        "Reviewer: ${review.reviewer}\nRating: ${review.rating}\nComment: ${review.comment}\n"
-                    }
-                    AlertDialog.Builder(this)
-                        .setTitle("Reseñas")
-                        .setMessage(reviewsText)
-                        .setPositiveButton("OK", null)
-                        .create()
-                        .show()
-                })
+                val cursor = sqlDao.getReviewsForNovel(selectedNovel.id)
+                val reviewsText = StringBuilder()
+                while (cursor.moveToNext()) {
+                    val reviewer = cursor.getString(cursor.getColumnIndexOrThrow("reviewer"))
+                    val rating = cursor.getInt(cursor.getColumnIndexOrThrow("rating"))
+                    val comment = cursor.getString(cursor.getColumnIndexOrThrow("comment"))
+                    reviewsText.append("Reviewer: $reviewer\nRating: $rating\nComment: $comment\n\n")
+                }
+                cursor.close()
+                AlertDialog.Builder(this)
+                    .setTitle("Reseñas")
+                    .setMessage(reviewsText.toString())
+                    .setPositiveButton("OK", null)
+                    .create()
+                    .show()
             } else {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
             }
@@ -157,8 +143,17 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
             val selectedNovel = novelAdapter.getSelectedNovel()
             if (selectedNovel != null) {
                 val isFavorite = !selectedNovel.isFavorite
-                novelViewModel.updateFavoriteStatus(selectedNovel.id, isFavorite)
+                val updatedNovel = Novel(
+                    id = selectedNovel.id,
+                    title = selectedNovel.title,
+                    author = selectedNovel.author,
+                    year = selectedNovel.year,
+                    synopsis = selectedNovel.synopsis,
+                    isFavorite = isFavorite
+                )
+                sqlDao.updateNovel(updatedNovel)
                 Toast.makeText(this, if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite", Toast.LENGTH_SHORT).show()
+                loadNovelsFromDatabase()
             } else {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
             }
@@ -171,10 +166,22 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
 
         sharedPreferences = getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
         applyUserSettings()
+    }
 
-        // Schedule the sync task
-        val syncScheduler = SyncScheduler(this)
-        syncScheduler.scheduleSync()
+    private fun loadNovelsFromDatabase() {
+        val cursor = sqlDao.getAllNovels()
+        val novels = mutableListOf<Novel>()
+        while (cursor.moveToNext()) {
+            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+            val title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
+            val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
+            val year = cursor.getInt(cursor.getColumnIndexOrThrow("year"))
+            val synopsis = cursor.getString(cursor.getColumnIndexOrThrow("synopsis"))
+            val isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite")) == 1
+            novels.add(Novel(id, title, author, year, synopsis, isFavorite))
+        }
+        cursor.close()
+        novelAdapter.setNovels(novels)
     }
 
     private fun applyUserSettings() {
@@ -184,19 +191,5 @@ class MainActivity : AppCompatActivity(), LoaderManager.LoaderCallbacks<List<Nov
         } else {
             setTheme(R.style.AppTheme)
         }
-    }
-
-    override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<Novel>> {
-        return NovelLoader(this)
-    }
-
-    override fun onLoadFinished(loader: Loader<List<Novel>>, data: List<Novel>?) {
-        // Update the adapter with the loaded data
-        novelAdapter.setNovels(data ?: emptyList())
-    }
-
-    override fun onLoaderReset(loader: Loader<List<Novel>>) {
-        // Clear the adapter
-        novelAdapter.setNovels(emptyList())
     }
 }
