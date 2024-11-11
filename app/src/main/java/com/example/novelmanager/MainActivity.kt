@@ -159,6 +159,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        buttonDeleteBook.setOnClickListener {
+            val novelToDelete = novelAdapter.getSelectedNovel()
+            if (novelToDelete != null) {
+                val rowsDeleted = sqlDao.deleteNovel(novelToDelete.id.toLong())
+                if (rowsDeleted > 0) {
+                    Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
+                    loadNovelsFromDatabase()
+                }
+            } else {
+                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         buttonSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
