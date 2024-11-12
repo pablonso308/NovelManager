@@ -66,7 +66,8 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.preference)
-    kapt(libs.androidx.room.compiler) // Ensure this line is present
+    implementation(libs.androidx.fragment)
+    kapt(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,5 +79,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("androidx.preference:preference:1.1.1")
     implementation ("androidx.sqlite:sqlite:2.1.0")
+    implementation ("androidx.fragment:fragment-ktx:1.3.6")
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.3.5")
 
 }
