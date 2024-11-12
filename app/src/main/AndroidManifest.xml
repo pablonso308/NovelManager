@@ -33,6 +33,15 @@
 
         <activity android:name=".SettingsActivity" />
         <receiver android:name=".SyncAlarmReceiver" />
+
+        <receiver android:name="com.example.novelmanager.widget.NewAppWidget"
+            android:exported="true">
+
+        <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/appwidget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>
