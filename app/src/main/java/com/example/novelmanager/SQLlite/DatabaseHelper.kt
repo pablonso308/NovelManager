@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
+
     override fun onCreate(db: SQLiteDatabase) {
+
         val createNovelsTable = """
             CREATE TABLE novels (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,6 +42,6 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "novelmanager.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
     }
 }

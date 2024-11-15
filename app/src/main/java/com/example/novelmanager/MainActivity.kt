@@ -153,6 +153,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 sqlDao.updateNovel(updatedNovel)
                 Toast.makeText(this, if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite", Toast.LENGTH_SHORT).show()
+
                 loadNovelsFromDatabase()
             } else {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()

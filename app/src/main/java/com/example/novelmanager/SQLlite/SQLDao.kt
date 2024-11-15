@@ -3,10 +3,12 @@ package com.example.novelmanager.SQLlite
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase
 import com.example.novelmanager.database.entidades.Novel
 
 class SQLDao(context: Context) {
     private val dbHelper = DatabaseHelper(context)
+    private val database: SQLiteDatabase = dbHelper.readableDatabase
 
     // Novel operations
     fun insertNovel(title: String, author: String, year: Int, synopsis: String, isFavorite: Boolean): Long {
@@ -58,5 +60,10 @@ class SQLDao(context: Context) {
     fun getReviewsForNovel(novelId: Int): Cursor {
         val db = dbHelper.readableDatabase
         return db.query("reviews", null, "novelId = ?", arrayOf(novelId.toString()), null, null, null)
+    }
+
+    fun getFavoriteNovels(): Cursor {
+        val query = "SELECT * FROM novels WHERE isFavorite = 1"
+        return database.rawQuery(query, null)
     }
 }

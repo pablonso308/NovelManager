@@ -13,13 +13,10 @@
         android:textStyle="bold"
         android:textSize="18sp" />
 
-    <LinearLayout
-        android:id="@+id/widget_layout"
+    <ListView
+        android:id="@+id/widget_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-
-    </LinearLayout>
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp" />
 </LinearLayout>
