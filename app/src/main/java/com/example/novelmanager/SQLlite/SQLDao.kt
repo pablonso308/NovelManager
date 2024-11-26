@@ -10,7 +10,6 @@ class SQLDao(context: Context) {
     private val dbHelper = DatabaseHelper(context)
     private val database: SQLiteDatabase = dbHelper.readableDatabase
 
-    // Novel operations
     fun insertNovel(title: String, author: String, year: Int, synopsis: String, isFavorite: Boolean): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
@@ -20,7 +19,9 @@ class SQLDao(context: Context) {
             put("synopsis", synopsis)
             put("isFavorite", if (isFavorite) 1 else 0)
         }
-        return db.insert("novels", null, values)
+        val result = db.insert("novels", null, values)
+        db.close()
+        return result
     }
 
     fun getAllNovels(): Cursor {
@@ -30,7 +31,9 @@ class SQLDao(context: Context) {
 
     fun deleteNovel(id: Long): Int {
         val db = dbHelper.writableDatabase
-        return db.delete("novels", "id = ?", arrayOf(id.toString()))
+        val result = db.delete("novels", "id = ?", arrayOf(id.toString()))
+        db.close()
+        return result
     }
 
     fun updateNovel(novel: Novel): Int {
@@ -42,10 +45,11 @@ class SQLDao(context: Context) {
             put("synopsis", novel.synopsis)
             put("isFavorite", if (novel.isFavorite) 1 else 0)
         }
-        return db.update("novels", values, "id = ?", arrayOf(novel.id.toString()))
+        val result = db.update("novels", values, "id = ?", arrayOf(novel.id.toString()))
+        db.close()
+        return result
     }
 
-    // Review operations
     fun insertReview(novelId: Int, reviewer: String, rating: Int, comment: String): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
@@ -54,7 +58,9 @@ class SQLDao(context: Context) {
             put("rating", rating)
             put("comment", comment)
         }
-        return db.insert("reviews", null, values)
+        val result = db.insert("reviews", null, values)
+        db.close()
+        return result
     }
 
     fun getReviewsForNovel(novelId: Int): Cursor {
