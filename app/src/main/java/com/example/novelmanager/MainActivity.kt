@@ -1,5 +1,9 @@
 package com.example.novelmanager
 
+import android.app.job.JobInfo
+import android.app.job.JobScheduler
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -14,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.novelmanager.SQLlite.SQLDao
 import com.example.novelmanager.database.entidades.Novel
 import com.example.novelmanager.novelaDatabase.NovelAdapter
+import com.example.novelmanager.optimizacion.BatteryJobService
+import com.example.novelmanager.optimizacion.NetworkJobService
 
 class MainActivity : AppCompatActivity() {
 
@@ -213,4 +219,24 @@ class MainActivity : AppCompatActivity() {
             setTheme(R.style.AppTheme)
         }
     }
+
+    private fun optimizeNetworkUsage() {
+    // Reducir la frecuencia de las actualizaciones en segundo plano
+    val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+    val jobInfo = JobInfo.Builder(1, ComponentName(this, NetworkJobService::class.java))
+        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+        .setPeriodic(15 * 60 * 1000) // 15 minutos
+        .build()
+    jobScheduler.schedule(jobInfo)
+}
+
+private fun optimizeBatteryUsage() {
+    // Usar JobScheduler para tareas en segundo plano
+    val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+    val jobInfo = JobInfo.Builder(2, ComponentName(this, BatteryJobService::class.java))
+        .setRequiresCharging(true)
+        .setPeriodic(30 * 60 * 1000) // 30 minutos
+        .build()
+    jobScheduler.schedule(jobInfo)
+}
 }
