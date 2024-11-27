@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novelmanager.SQLlite.SQLDao
 import com.example.novelmanager.database.entidades.Novel
+import com.example.novelmanager.novelaDatabase.NovelAdapter
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,10 +25,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var novelAdapter: NovelAdapter
     private lateinit var buttonFavoriteBook: Button
     private lateinit var buttonSettings: Button
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sqlDao: SQLDao
+    private lateinit var sharedPreferences: SharedPreferences
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        sharedPreferences = getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
+        applyUserSettings()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -44,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         recyclerView.setHasFixedSize(true)
         novelAdapter = NovelAdapter()
         recyclerView.adapter = novelAdapter
+
+
 
         loadNovelsFromDatabase()
 
@@ -178,8 +185,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        sharedPreferences = getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
-        applyUserSettings()
+
     }
 
     private fun loadNovelsFromDatabase() {
@@ -197,6 +203,7 @@ class MainActivity : AppCompatActivity() {
         cursor.close()
         novelAdapter.setNovels(novels)
     }
+
 
     private fun applyUserSettings() {
         val darkMode = sharedPreferences.getBoolean("dark_mode", false)
