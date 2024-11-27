@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.novelmanager.NovelDao
+import com.example.novelmanager.novelaDatabase.NovelDao
 import com.example.novelmanager.database.entidades.Novel
 @Database(entities = [Novel::class], version = 2)
 abstract class NovelDatabase : RoomDatabase() {

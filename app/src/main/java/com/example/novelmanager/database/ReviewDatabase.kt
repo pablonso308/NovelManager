@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.novelmanager.database.dao.ReviewDao
+import com.example.novelmanager.reviewDatabase.ReviewDao
 import com.example.novelmanager.database.entidades.Review
 
 @Database(entities = [Review::class], version = 1)

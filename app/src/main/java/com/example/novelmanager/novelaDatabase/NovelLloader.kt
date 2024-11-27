@@ -1,4 +1,4 @@
-package com.example.novelmanager
+package com.example.novelmanager.novelaDatabase
 
 import android.content.Context
 import androidx.loader.content.AsyncTaskLoader

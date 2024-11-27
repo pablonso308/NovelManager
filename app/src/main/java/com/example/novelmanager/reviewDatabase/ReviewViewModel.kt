@@ -1,4 +1,4 @@
-package com.example.novelmanager
+package com.example.novelmanager.reviewDatabase
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel

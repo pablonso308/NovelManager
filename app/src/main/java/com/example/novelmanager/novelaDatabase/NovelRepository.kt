@@ -1,4 +1,4 @@
-package com.example.novelmanager
+package com.example.novelmanager.novelaDatabase
 
 import android.app.Application
 import androidx.lifecycle.LiveData

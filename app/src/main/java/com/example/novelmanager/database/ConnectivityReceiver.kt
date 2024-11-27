@@ -1,4 +1,4 @@
-package com.example.novelmanager
+package com.example.novelmanager.database
 
 import android.content.BroadcastReceiver
 import android.content.Context

@@ -230,7 +230,7 @@ class MainActivity : AppCompatActivity() {
     jobScheduler.schedule(jobInfo)
 }
 
-private fun optimizeBatteryUsage() {
+    private fun optimizeBatteryUsage() {
     // Usar JobScheduler para tareas en segundo plano
     val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
     val jobInfo = JobInfo.Builder(2, ComponentName(this, BatteryJobService::class.java))

@@ -1,4 +1,4 @@
-package com.example.novelmanager.database.dao
+package com.example.novelmanager.reviewDatabase
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

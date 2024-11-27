@@ -1,8 +1,9 @@
-package com.example.novelmanager
+package com.example.novelmanager.alarma
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.example.novelmanager.database.SyncDataTask
 import com.example.novelmanager.database.entidades.Novel
 
 class SyncAlarmReceiver : BroadcastReceiver() {

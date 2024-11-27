@@ -1,4 +1,4 @@
-package com.example.novelmanager
+package com.example.novelmanager.alarma
 
 import android.app.AlarmManager
 import android.app.PendingIntent

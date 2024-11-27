@@ -13,6 +13,9 @@ class SettingsActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        sharedPreferences = getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
+        applyUserSettings()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
 

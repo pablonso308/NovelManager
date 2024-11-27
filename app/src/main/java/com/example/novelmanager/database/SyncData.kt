@@ -1,8 +1,9 @@
-package com.example.novelmanager
+package com.example.novelmanager.database
 
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
+import com.example.novelmanager.alarma.NotificationHelper
 import com.example.novelmanager.database.entidades.Novel
 import com.example.novelmanager.network.RetrofitClient
 import retrofit2.Call

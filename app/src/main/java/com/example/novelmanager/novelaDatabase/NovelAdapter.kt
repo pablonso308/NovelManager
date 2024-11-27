@@ -1,4 +1,4 @@
-package com.example.novelmanager
+package com.example.novelmanager.novelaDatabase
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.novelmanager.R
 import com.example.novelmanager.database.entidades.Novel
 
 class NovelAdapter : RecyclerView.Adapter<NovelAdapter.NovelViewHolder>() {
