@@ -57,3 +57,39 @@ Integración de un sistema de recomendaciones basado en las novelas agregadas.
 Contribuciones
 Las contribuciones a este proyecto son bienvenidas. Si tienes ideas o mejoras, abre un issue o envía un pull request.
 
+# Project Optimizations
+
+## Memory Optimization
+- **Efficient Data Structures**: Utilized efficient data structures to minimize memory usage.
+- **Bitmap Management**: Implemented proper bitmap management to avoid memory leaks.
+- **Garbage Collection**: Ensured timely garbage collection by avoiding memory leaks and unnecessary object references.
+
+## Network Optimization
+- **Caching**: Implemented caching mechanisms to reduce network calls and improve performance.
+- **Compression**: Enabled data compression to reduce the amount of data transmitted over the network.
+- **Efficient API Calls**: Optimized API calls to fetch only necessary data and reduce payload size.
+
+## Battery Optimization
+- **Background Tasks**: Minimized background tasks and ensured they run only when necessary.
+- **JobScheduler**: Used `JobScheduler` for scheduling background tasks efficiently.
+- **Battery Saver Mode**: Implemented battery saver mode to reduce power consumption when the device is low on battery.
+
+## Implementation Details
+
+### Memory Optimization
+- **Efficient Data Structures**: Replaced `ArrayList` with `SparseArray` where applicable.
+- **Bitmap Management**: Used `BitmapFactory.Options` to downsample images and reduce memory usage.
+- **Garbage Collection**: Ensured proper use of `WeakReference` to avoid memory leaks.
+
+### Network Optimization
+- **Caching**: Implemented HTTP response caching using `OkHttp` library.
+- **Compression**: Enabled GZIP compression for network requests.
+- **Efficient API Calls**: Used pagination and selective data fetching to reduce network load.
+
+### Battery Optimization
+- **Background Tasks**: Reduced the frequency of background tasks and used `WorkManager` for efficient task scheduling.
+- **JobScheduler**: Scheduled background tasks using `JobScheduler` to run during optimal conditions.
+- **Battery Saver Mode**: Implemented a battery saver mode that reduces the frequency of background updates and disables non-essential features.
+
+## Conclusion
+These optimizations help in improving the overall performance of the application by reducing memory usage, minimizing network calls, and conserving battery life. The implementation of these optimizations ensures a smoother and more efficient user experience.
