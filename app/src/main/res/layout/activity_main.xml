@@ -22,12 +22,10 @@
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:text="Agregar Novela"
+            android:text="Agregar Libro"
             android:background="@drawable/rounded_button"
             android:layout_margin="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            style="?android:attr/buttonStyle"/>
 
         <Button
             android:id="@+id/buttonDeleteBook"
@@ -35,9 +33,10 @@
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:layout_rowWeight="1"
-            android:text="Eliminar Novela"
+            android:text="Eliminar Libro"
             android:background="@drawable/rounded_button"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            style="?android:attr/buttonStyle"/>
 
         <Button
             android:id="@+id/buttonAddReview"
@@ -47,7 +46,8 @@
             android:layout_rowWeight="1"
             android:text="Agregar Reseña"
             android:background="@drawable/rounded_button"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            style="?android:attr/buttonStyle"/>
 
         <Button
             android:id="@+id/buttonShowReviews"
@@ -57,7 +57,8 @@
             android:layout_rowWeight="1"
             android:text="Mostrar Reseñas"
             android:background="@drawable/rounded_button"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            style="?android:attr/buttonStyle"/>
 
         <Button
             android:id="@+id/buttonFavoriteBook"
@@ -67,7 +68,8 @@
             android:layout_rowWeight="1"
             android:text="Favorita"
             android:background="@drawable/rounded_button"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            style="?android:attr/buttonStyle"/>
 
         <Button
             android:id="@+id/buttonSettings"
@@ -77,7 +79,19 @@
             android:layout_rowWeight="1"
             android:text="Settings"
             android:background="@drawable/rounded_button"
-            android:layout_margin="8dp" />
+            android:layout_margin="8dp"
+            style="?android:attr/buttonStyle"/>
+
+        <Button
+            android:id="@+id/buttonLocateMe"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_columnWeight="1"
+            android:layout_rowWeight="1"
+            android:text="Ubicarme"
+            android:background="@drawable/rounded_button"
+            android:layout_margin="8dp"
+            style="?android:attr/buttonStyle"/>
 
     </GridLayout>
 
@@ -95,10 +109,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/buttonAddBook"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:layout_height="match_parent"/>
     </androidx.cardview.widget.CardView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

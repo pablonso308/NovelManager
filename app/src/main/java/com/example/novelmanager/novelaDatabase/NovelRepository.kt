@@ -47,4 +47,12 @@ class NovelRepository(application: Application) {
         }
     }
 
+    fun getAllNovels() {
+        coroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                novelDao.getAllNovels()
+            }
+        }
+    }
+
 }

@@ -13,13 +13,17 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.novelmanager.SQLlite.SQLDao
 import com.example.novelmanager.database.entidades.Novel
 import com.example.novelmanager.novelaDatabase.NovelAdapter
+import com.example.novelmanager.novelaDatabase.NovelViewModel
 import com.example.novelmanager.optimizacion.BatteryJobService
 import com.example.novelmanager.optimizacion.NetworkJobService
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,17 +31,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonDeleteBook: Button
     private lateinit var buttonAddReview: Button
     private lateinit var buttonShowReviews: Button
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var novelAdapter: NovelAdapter
     private lateinit var buttonFavoriteBook: Button
     private lateinit var buttonSettings: Button
+    private lateinit var buttonLocateMe: Button
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var novelAdapter: NovelAdapter
     private lateinit var sqlDao: SQLDao
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var novelViewModel: NovelViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        sharedPreferences = getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
+        sharedPreferences =
+            getSharedPreferences("com.example.novelmanager_preferences", MODE_PRIVATE)
         applyUserSettings()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         buttonShowReviews = findViewById(R.id.buttonShowReviews)
         buttonFavoriteBook = findViewById(R.id.buttonFavoriteBook)
         buttonSettings = findViewById(R.id.buttonSettings)
+        buttonLocateMe = findViewById(R.id.buttonLocateMe)
         recyclerView = findViewById(R.id.recyclerView)
         sqlDao = SQLDao(this)
 
@@ -56,7 +63,10 @@ class MainActivity : AppCompatActivity() {
         novelAdapter = NovelAdapter()
         recyclerView.adapter = novelAdapter
 
-
+        novelViewModel = ViewModelProvider(this).get(NovelViewModel::class.java)
+        novelViewModel.allNovels.observe(this, Observer { novels ->
+            novelAdapter.setNovels(novels)
+        })
 
         loadNovelsFromDatabase()
 
@@ -78,7 +88,8 @@ class MainActivity : AppCompatActivity() {
 
                     val newNovelId = sqlDao.insertNovel(title, author, year, synopsis, false)
                     if (newNovelId != -1L) {
-                        Toast.makeText(this, "Novel added with ID: $newNovelId", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Novel added with ID: $newNovelId", Toast.LENGTH_SHORT)
+                            .show()
                         loadNovelsFromDatabase()
                     }
                 }
@@ -116,7 +127,8 @@ class MainActivity : AppCompatActivity() {
                         val rating = editTextRating.text.toString().toIntOrNull() ?: 0
                         val comment = editTextComment.text.toString()
 
-                        val newReviewId = sqlDao.insertReview(selectedNovel.id, reviewer, rating, comment)
+                        val newReviewId =
+                            sqlDao.insertReview(selectedNovel.id, reviewer, rating, comment)
                         if (newReviewId != -1L) {
                             Toast.makeText(this, "Review added", Toast.LENGTH_SHORT).show()
                         }
@@ -165,22 +177,13 @@ class MainActivity : AppCompatActivity() {
                     isFavorite = isFavorite
                 )
                 sqlDao.updateNovel(updatedNovel)
-                Toast.makeText(this, if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite",
+                    Toast.LENGTH_SHORT
+                ).show()
 
                 loadNovelsFromDatabase()
-            } else {
-                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        buttonDeleteBook.setOnClickListener {
-            val novelToDelete = novelAdapter.getSelectedNovel()
-            if (novelToDelete != null) {
-                val rowsDeleted = sqlDao.deleteNovel(novelToDelete.id.toLong())
-                if (rowsDeleted > 0) {
-                    Toast.makeText(this, "Novel deleted", Toast.LENGTH_SHORT).show()
-                    loadNovelsFromDatabase()
-                }
             } else {
                 Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
             }
@@ -191,8 +194,13 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        buttonLocateMe.setOnClickListener {
+            val intent = Intent(this, LocateMeActivity::class.java)
+            startActivity(intent)
+        }
 
     }
+
 
     private fun loadNovelsFromDatabase() {
         val cursor = sqlDao.getAllNovels()
@@ -210,7 +218,6 @@ class MainActivity : AppCompatActivity() {
         novelAdapter.setNovels(novels)
     }
 
-
     private fun applyUserSettings() {
         val darkMode = sharedPreferences.getBoolean("dark_mode", false)
         if (darkMode) {
@@ -221,22 +228,22 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun optimizeNetworkUsage() {
-    // Reducir la frecuencia de las actualizaciones en segundo plano
-    val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-    val jobInfo = JobInfo.Builder(1, ComponentName(this, NetworkJobService::class.java))
-        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-        .setPeriodic(15 * 60 * 1000) // 15 minutos
-        .build()
-    jobScheduler.schedule(jobInfo)
-}
+        // Reducir la frecuencia de las actualizaciones en segundo plano
+        val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val jobInfo = JobInfo.Builder(1, ComponentName(this, NetworkJobService::class.java))
+            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+            .setPeriodic(15 * 60 * 1000) // 15 minutos
+            .build()
+        jobScheduler.schedule(jobInfo)
+    }
 
     private fun optimizeBatteryUsage() {
-    // Usar JobScheduler para tareas en segundo plano
-    val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-    val jobInfo = JobInfo.Builder(2, ComponentName(this, BatteryJobService::class.java))
-        .setRequiresCharging(true)
-        .setPeriodic(30 * 60 * 1000) // 30 minutos
-        .build()
-    jobScheduler.schedule(jobInfo)
-}
+        // Usar JobScheduler para tareas en segundo plano
+        val jobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+        val jobInfo = JobInfo.Builder(2, ComponentName(this, BatteryJobService::class.java))
+            .setRequiresCharging(true)
+            .setPeriodic(30 * 60 * 1000) // 30 minutos
+            .build()
+        jobScheduler.schedule(jobInfo)
+    }
 }

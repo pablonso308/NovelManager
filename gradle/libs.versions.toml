@@ -16,7 +16,8 @@ roomKtx = "2.6.1"
 roomCompiler = "2.6.1"
 preferenceKtx = "1.2.1"
 preference = "1.2.1"
-fragment = "1.8.5" # Add this line
+fragment = "1.8.5"
+playServicesMaps = "19.0.0" # Add this line
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,7 +42,8 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 androidx-preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
-androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" } # Add this line
+androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" } # Add this line
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -30,4 +30,9 @@ class NovelViewModel(application: Application) : AndroidViewModel(application) {
     fun setNovels(novelList: List<Novel>) {
         (allNovels as MutableLiveData).value = novelList
     }
+
+    fun getAllNovels(){
+        repository.getAllNovels()
+    }
+
 }

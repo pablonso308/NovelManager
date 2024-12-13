@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,6 +20,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDvrHEMGReJgFYsiJW-4nDwqsOM0oFDqIU"/>
 
         <activity
             android:name=".startActivity"
@@ -32,7 +39,7 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.AppCompat.Light" />
-
+        <activity android:name=".LocateMeActivity" />
         <activity android:name=".SettingsActivity" />
         <receiver android:name=".alarma.SyncAlarmReceiver" />
 
@@ -46,8 +53,8 @@
                 android:resource="@xml/appwidget_provider_info" />
         </receiver>
 
-    <service
-        android:name=".widget.WidgetService"
-        android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <service
+            android:name=".widget.WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
     </application>
 </manifest>

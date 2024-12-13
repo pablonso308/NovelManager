@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.preference)
     implementation(libs.androidx.fragment)
+    implementation(libs.play.services.maps)
     kapt(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -82,5 +83,8 @@ dependencies {
     implementation ("androidx.fragment:fragment-ktx:1.3.6")
     implementation ("androidx.navigation:navigation-fragment-ktx:2.3.5")
     implementation ("androidx.navigation:navigation-ui-ktx:2.3.5")
+    implementation ("com.google.android.gms:play-services-maps:18.1.0")
+    implementation ("com.google.android.gms:play-services-location:21.0.1")
+
 
 }
