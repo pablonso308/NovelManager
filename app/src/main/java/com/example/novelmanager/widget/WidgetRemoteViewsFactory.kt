@@ -17,23 +17,27 @@ class WidgetRemoteViewsFactory(private val context: Context, intent: Intent) : R
         // Initialize data source
     }
 
-    override fun onDataSetChanged() {
-        val sqlDao = SQLDao(context)
-        val cursor: Cursor = sqlDao.getFavoriteNovels()
-        val novelsList = mutableListOf<Novel>()
-        while (cursor.moveToNext()) {
-            val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
-            val title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
-            val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
-            val year = cursor.getInt(cursor.getColumnIndexOrThrow("year"))
-            val synopsis = cursor.getString(cursor.getColumnIndexOrThrow("synopsis"))
-            val isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite")) == 1
-            novelsList.add(Novel(id, title, author, year, synopsis, isFavorite))
-        }
-        cursor.close()
-        novels = novelsList
+override fun onDataSetChanged() {
+    val sqlDao = SQLDao(context)
+    val cursor: Cursor = sqlDao.getFavoriteNovels()
+    val novelsList = mutableListOf<Novel>()
+    while (cursor.moveToNext()) {
+        val id = cursor.getInt(cursor.getColumnIndexOrThrow("id"))
+        val title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
+        val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
+        val year = cursor.getInt(cursor.getColumnIndexOrThrow("year"))
+        val synopsis = cursor.getString(cursor.getColumnIndexOrThrow("synopsis"))
+        val isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite")) == 1
+        val latitude = cursor.getDouble(cursor.getColumnIndexOrThrow("latitude"))
+        val longitude = cursor.getDouble(cursor.getColumnIndexOrThrow("longitude"))
+
+        // Orden correcto
+        novelsList.add(Novel(id, title, author, year, synopsis, isFavorite, latitude, longitude))
     }
 
+    cursor.close()
+    novels = novelsList
+}
     override fun onDestroy() {
         // Clean up resources
     }

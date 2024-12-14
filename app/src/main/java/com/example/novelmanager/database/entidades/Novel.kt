@@ -10,5 +10,7 @@ data class Novel(
     val author: String,
     val year: Int,
     val synopsis: String,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean ,
+    val latitude: Double? ,
+    val longitude: Double?
 )

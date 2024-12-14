@@ -25,7 +25,11 @@ class ConnectivityReceiver : BroadcastReceiver() {
                     title = title,
                     author = author,
                     year = year,
-                    synopsis = synopsis
+                    synopsis = synopsis,
+                    longitude = 0.0,
+                    latitude = 0.0,
+                    isFavorite = false
+
                 )
                 val syncDataTask = SyncDataTask(context, novelToSend)
                 syncDataTask.execute()

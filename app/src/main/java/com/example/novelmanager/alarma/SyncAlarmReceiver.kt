@@ -14,7 +14,10 @@ class SyncAlarmReceiver : BroadcastReceiver() {
             title = "Sample Title",
             author = "Sample Author",
             year = 2023,
-            synopsis = "Sample Synopsis"
+            synopsis = "Sample Synopsis",
+            isFavorite = false,
+            longitude = 0.0,
+            latitude = 0.0
         )
         val syncDataTask = SyncDataTask(context, novelToSend)
         syncDataTask.execute()

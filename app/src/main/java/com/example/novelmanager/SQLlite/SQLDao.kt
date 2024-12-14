@@ -10,7 +10,15 @@ class SQLDao(context: Context) {
     private val dbHelper = DatabaseHelper(context)
     private val database: SQLiteDatabase = dbHelper.readableDatabase
 
-    fun insertNovel(title: String, author: String, year: Int, synopsis: String, isFavorite: Boolean): Long {
+    fun insertNovel(
+        title: String,
+        author: String,
+        year: Int,
+        synopsis: String,
+        isFavorite: Boolean,
+        latitude: Double?,
+        longitude: Double?
+    ): Long {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put("title", title)
@@ -18,6 +26,8 @@ class SQLDao(context: Context) {
             put("year", year)
             put("synopsis", synopsis)
             put("isFavorite", if (isFavorite) 1 else 0)
+            put("latitude", latitude)
+            put("longitude", longitude)
         }
         val result = db.insert("novels", null, values)
         db.close()
@@ -44,6 +54,8 @@ class SQLDao(context: Context) {
             put("year", novel.year)
             put("synopsis", novel.synopsis)
             put("isFavorite", if (novel.isFavorite) 1 else 0)
+            put("latitude", novel.latitude)
+            put("longitude", novel.longitude)
         }
         val result = db.update("novels", values, "id = ?", arrayOf(novel.id.toString()))
         db.close()

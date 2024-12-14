@@ -76,6 +76,8 @@ class MainActivity : AppCompatActivity() {
             val editTextAuthor = dialogView.findViewById<EditText>(R.id.editTextAuthor)
             val editTextYear = dialogView.findViewById<EditText>(R.id.editTextYear)
             val editTextSynopsis = dialogView.findViewById<EditText>(R.id.editTextSynopsis)
+            val editTextLatitude = dialogView.findViewById<EditText>(R.id.editTextLatitude)
+            val editTextLongitude = dialogView.findViewById<EditText>(R.id.editTextLongitude)
 
             AlertDialog.Builder(this)
                 .setTitle("Agregar Novela")
@@ -85,18 +87,23 @@ class MainActivity : AppCompatActivity() {
                     val author = editTextAuthor.text.toString()
                     val year = editTextYear.text.toString().toIntOrNull() ?: 0
                     val synopsis = editTextSynopsis.text.toString()
+                    val latitude = editTextLatitude.text.toString().toDoubleOrNull()
+                    val longitude = editTextLongitude.text.toString().toDoubleOrNull()
 
-                    val newNovelId = sqlDao.insertNovel(title, author, year, synopsis, false)
+                    // Llama a insertNovel con latitude y longitude
+                    val newNovelId = sqlDao.insertNovel(title, author, year, synopsis, false, latitude, longitude)
                     if (newNovelId != -1L) {
-                        Toast.makeText(this, "Novel added with ID: $newNovelId", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(this, "Novel added with ID: $newNovelId", Toast.LENGTH_SHORT).show()
                         loadNovelsFromDatabase()
+                    } else {
+                        Toast.makeText(this, "Error adding novel", Toast.LENGTH_SHORT).show()
                     }
                 }
                 .setNegativeButton("Cancelar", null)
                 .create()
                 .show()
         }
+
 
         buttonDeleteBook.setOnClickListener {
             val novelToDelete = novelAdapter.getSelectedNovel()
@@ -164,30 +171,33 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        buttonFavoriteBook.setOnClickListener {
-            val selectedNovel = novelAdapter.getSelectedNovel()
-            if (selectedNovel != null) {
-                val isFavorite = !selectedNovel.isFavorite
-                val updatedNovel = Novel(
-                    id = selectedNovel.id,
-                    title = selectedNovel.title,
-                    author = selectedNovel.author,
-                    year = selectedNovel.year,
-                    synopsis = selectedNovel.synopsis,
-                    isFavorite = isFavorite
-                )
-                sqlDao.updateNovel(updatedNovel)
-                Toast.makeText(
-                    this,
-                    if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite",
-                    Toast.LENGTH_SHORT
-                ).show()
+    buttonFavoriteBook.setOnClickListener {
+    val selectedNovel = novelAdapter.getSelectedNovel()
+    if (selectedNovel != null) {
+        val isFavorite = !selectedNovel.isFavorite
+        val updatedNovel = Novel(
+            id = selectedNovel.id,
+            title = selectedNovel.title,
+            author = selectedNovel.author,
+            year = selectedNovel.year,
+            synopsis = selectedNovel.synopsis,
+            latitude = selectedNovel.latitude,
+            longitude = selectedNovel.longitude,
+            isFavorite = isFavorite
+        )
+        sqlDao.updateNovel(updatedNovel)
+        Toast.makeText(
+            this,
+            if (isFavorite) "Novel marked as favorite" else "Novel unmarked as favorite",
+            Toast.LENGTH_SHORT
+        ).show()
 
-                loadNovelsFromDatabase()
-            } else {
-                Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
-            }
+        loadNovelsFromDatabase()
+    } else {
+        Toast.makeText(this, "No novel selected", Toast.LENGTH_SHORT).show()
+                }
         }
+
 
         buttonSettings.setOnClickListener {
             val intent = Intent(this, SettingsActivity::class.java)
@@ -201,7 +211,6 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
     private fun loadNovelsFromDatabase() {
         val cursor = sqlDao.getAllNovels()
         val novels = mutableListOf<Novel>()
@@ -211,12 +220,16 @@ class MainActivity : AppCompatActivity() {
             val author = cursor.getString(cursor.getColumnIndexOrThrow("author"))
             val year = cursor.getInt(cursor.getColumnIndexOrThrow("year"))
             val synopsis = cursor.getString(cursor.getColumnIndexOrThrow("synopsis"))
+            val latitude = if (cursor.isNull(cursor.getColumnIndexOrThrow("latitude"))) null else cursor.getDouble(cursor.getColumnIndexOrThrow("latitude"))
+            val longitude = if (cursor.isNull(cursor.getColumnIndexOrThrow("longitude"))) null else cursor.getDouble(cursor.getColumnIndexOrThrow("longitude"))
             val isFavorite = cursor.getInt(cursor.getColumnIndexOrThrow("isFavorite")) == 1
-            novels.add(Novel(id, title, author, year, synopsis, isFavorite))
+
+            novels.add(Novel(id, title, author, year, synopsis, isFavorite, latitude, longitude))
         }
         cursor.close()
         novelAdapter.setNovels(novels)
     }
+
 
     private fun applyUserSettings() {
         val darkMode = sharedPreferences.getBoolean("dark_mode", false)
